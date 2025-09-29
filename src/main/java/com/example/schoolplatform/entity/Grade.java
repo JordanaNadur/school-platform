@@ -1,7 +1,7 @@
 package com.example.schoolplatform.entity;
 
 import lombok.Data;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "grades")
@@ -12,6 +12,7 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "grade_value")
     private Double value;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,3 +31,4 @@ public class Grade {
         this.exam = exam;
     }
 }
+
