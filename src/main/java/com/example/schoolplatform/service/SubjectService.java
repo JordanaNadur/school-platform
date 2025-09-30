@@ -1,10 +1,12 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.SubjectDTO;
 import com.example.schoolplatform.entity.Subject;
-import com.example.schoolplatform.repository.SubjectRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
+import com.example.schoolplatform.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -13,23 +15,30 @@ public class SubjectService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public List<Subject> findAll() {
-        return subjectRepository.findAll();
+    public List<SubjectDTO> findAll() {
+        return subjectRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    public Subject findById(Long id) {
-        return subjectRepository.findById(id)
+    public SubjectDTO findById(Long id) {
+        Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id " + id));
+        return toDTO(subject);
     }
 
-    public Subject save(Subject subject) {
-        return subjectRepository.save(subject);
+    public SubjectDTO save(Subject subject) {
+        return toDTO(subjectRepository.save(subject));
     }
 
-    public Subject update(Long id, Subject subjectDetails) {
-        Subject subject = findById(id);
+    public SubjectDTO update(Long id, Subject subjectDetails) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id " + id));
+
         subject.setName(subjectDetails.getName());
-        return subjectRepository.save(subject);
+
+        return toDTO(subjectRepository.save(subject));
     }
 
     public void deleteById(Long id) {
@@ -37,5 +46,11 @@ public class SubjectService {
             throw new ResourceNotFoundException("Subject not found with id " + id);
         }
         subjectRepository.deleteById(id);
+    }
+
+    private SubjectDTO toDTO(Subject subject) {
+        return new SubjectDTO(
+                subject.getName()
+        );
     }
 }

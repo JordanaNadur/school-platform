@@ -1,10 +1,15 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.ExamDTO;
+import com.example.schoolplatform.dto.GradeDTO;
+import com.example.schoolplatform.dto.StudentDTO;
+import com.example.schoolplatform.dto.SubjectDTO;
 import com.example.schoolplatform.entity.Student;
-import com.example.schoolplatform.repository.StudentRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
+import com.example.schoolplatform.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -13,24 +18,29 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public List<Student> findAll() {
-        return studentRepository.findAll();
+    public List<StudentDTO> findAll() {
+        return studentRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    public Student findById(Long id) {
-        return studentRepository.findById(id)
+    public StudentDTO findById(Long id) {
+        Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + id));
+        return toDTO(student);
     }
 
-    public Student save(Student student) {
-        return studentRepository.save(student);
+    public StudentDTO save(Student student) {
+        return toDTO(studentRepository.save(student));
     }
 
-    public Student update(Long id, Student studentDetails) {
-        Student student = findById(id);
+    public StudentDTO update(Long id, Student studentDetails) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + id));
         student.setName(studentDetails.getName());
         student.setEmail(studentDetails.getEmail());
-        return studentRepository.save(student);
+        return toDTO(studentRepository.save(student));
     }
 
     public void deleteById(Long id) {
@@ -38,5 +48,33 @@ public class StudentService {
             throw new ResourceNotFoundException("Student not found with id " + id);
         }
         studentRepository.deleteById(id);
+    }
+
+    private StudentDTO toDTO(Student student) {
+        List<GradeDTO> gradeDTOs = student.getGrades() != null
+                ? student.getGrades().stream()
+                .map(g -> {
+                    SubjectDTO subjectDTO = g.getExam() != null && g.getExam().getSubject() != null
+                            ? new SubjectDTO(g.getExam().getSubject().getName())
+                            : null;
+
+                    ExamDTO examDTO = g.getExam() != null
+                            ? new ExamDTO(g.getExam().getTitle(), subjectDTO)
+                            : null;
+
+                    return new GradeDTO(
+                            g.getValue(),
+                            student.getName(),
+                            examDTO
+                    );
+                })
+                .toList()
+                : List.of();
+
+        return new StudentDTO(
+                student.getName(),
+                student.getEmail(),
+                gradeDTOs
+        );
     }
 }

@@ -1,7 +1,9 @@
 package com.example.schoolplatform.controller;
 
+import com.example.schoolplatform.dto.ExamDTO;
 import com.example.schoolplatform.entity.Exam;
 import com.example.schoolplatform.service.ExamService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,25 +17,26 @@ public class ExamController {
     private ExamService examService;
 
     @GetMapping
-    public List<Exam> getAllExams() {
+    public List<ExamDTO> getAllExams() {
         return examService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Exam> getExamById(@PathVariable Long id) {
-        Exam exam = examService.findById(id);
-        return ResponseEntity.ok(exam);
+    public ResponseEntity<ExamDTO> getExamById(@PathVariable Long id) {
+        return ResponseEntity.ok(examService.findById(id));
     }
 
     @PostMapping
-    public Exam createExam(@RequestBody Exam exam) {
+    public ExamDTO createExam(@Valid @RequestBody Exam exam) {
         return examService.save(exam);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Exam> updateExam(@PathVariable Long id, @RequestBody Exam examDetails) {
-        Exam updatedExam = examService.update(id, examDetails);
-        return ResponseEntity.ok(updatedExam);
+    public ResponseEntity<ExamDTO> updateExam(
+            @PathVariable Long id,
+            @Valid @RequestBody Exam examDetails
+    ) {
+        return ResponseEntity.ok(examService.update(id, examDetails));
     }
 
     @DeleteMapping("/{id}")
