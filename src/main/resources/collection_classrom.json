@@ -1,0 +1,48 @@
+{
+  "info": {
+    "name": "School Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Students",
+      "item": [
+        {"name": "List all students","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/students","protocol":"http","host":["localhost"],"port":"8080","path":["api","students"]}}},
+        {"name": "Get student by ID","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/students/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","students","1"]}}},
+        {"name": "Create student","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/students","protocol":"http","host":["localhost"],"port":"8080","path":["api","students"]},"body":{"mode":"raw","raw":"{\"name\": \"Gustavo Farias\", \"email\": \"gustavo@example.com\"}"}}},
+        {"name": "Update student","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/students/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","students","1"]},"body":{"mode":"raw","raw":"{\"name\": \"Gustavo Farias Updated\", \"email\": \"gustavo_new@example.com\"}"}}},
+        {"name": "Delete student","request":{"method":"DELETE","url":{"raw":"http://localhost:8080/api/students/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","students","1"]}}}
+      ]
+    },
+    {
+      "name": "Subjects",
+      "item": [
+        {"name": "List all subjects","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/subjects","protocol":"http","host":["localhost"],"port":"8080","path":["api","subjects"]}}},
+        {"name": "Get subject by ID","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/subjects/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","subjects","1"]}}},
+        {"name": "Create subject","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/subjects","protocol":"http","host":["localhost"],"port":"8080","path":["api","subjects"]},"body":{"mode":"raw","raw":"{\"name\": \"Mathematics\"}"}}},
+        {"name": "Update subject","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/subjects/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","subjects","1"]},"body":{"mode":"raw","raw":"{\"name\": \"Advanced Mathematics\"}"}}},
+        {"name": "Delete subject","request":{"method":"DELETE","url":{"raw":"http://localhost:8080/api/subjects/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","subjects","1"]}}}
+      ]
+    },
+    {
+      "name": "Exams",
+      "item": [
+        {"name": "List all exams","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/exams","protocol":"http","host":["localhost"],"port":"8080","path":["api","exams"]}}},
+        {"name": "Get exam by ID","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/exams/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","exams","1"]}}},
+        {"name": "Create exam","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/exams","protocol":"http","host":["localhost"],"port":"8080","path":["api","exams"]},"body":{"mode":"raw","raw":"{\"title\": \"Exam 1\", \"subjectId\": 1}"}}},
+        {"name": "Update exam","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/exams/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","exams","1"]},"body":{"mode":"raw","raw":"{\"title\": \"Updated Exam 1\", \"subjectId\": 1}"}}},
+        {"name": "Delete exam","request":{"method":"DELETE","url":{"raw":"http://localhost:8080/api/exams/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","exams","1"]}}}
+      ]
+    },
+    {
+      "name": "Grades",
+      "item": [
+        {"name": "List all grades","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/grades","protocol":"http","host":["localhost"],"port":"8080","path":["api","grades"]}}},
+        {"name": "Get grade by ID","request":{"method":"GET","url":{"raw":"http://localhost:8080/api/grades/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","grades","1"]}}},
+        {"name": "Create grade","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/grades","protocol":"http","host":["localhost"],"port":"8080","path":["api","grades"]},"body":{"mode":"raw","raw":"{\"studentId\": 1, \"examId\": 1, \"value\": 9.5}"}}},
+        {"name": "Update grade","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"url":{"raw":"http://localhost:8080/api/grades/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","grades","1"]},"body":{"mode":"raw","raw":"{\"studentId\": 1, \"examId\": 1, \"value\": 10}"}}},
+        {"name": "Delete grade","request":{"method":"DELETE","url":{"raw":"http://localhost:8080/api/grades/1","protocol":"http","host":["localhost"],"port":"8080","path":["api","grades","1"]}}}
+      ]
+    }
+  ]
+}

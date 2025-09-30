@@ -1,5 +1,8 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.ExamDTO;
+import com.example.schoolplatform.dto.StudentDTO;
+import com.example.schoolplatform.dto.SubjectDTO;
 import com.example.schoolplatform.entity.Grade;
 import com.example.schoolplatform.repository.GradeRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
@@ -50,11 +53,20 @@ public class GradeService {
     }
 
     private GradeDTO toDTO(Grade grade) {
+        SubjectDTO subjectDTO = grade.getExam() != null && grade.getExam().getSubject() != null
+                ? new SubjectDTO(grade.getExam().getSubject().getName())
+                : null;
+
+        ExamDTO examDTO = grade.getExam() != null
+                ? new ExamDTO(grade.getExam().getTitle(), subjectDTO)
+                : null;
+
+        String studentName = grade.getStudent() != null ? grade.getStudent().getName() : null;
+
         return new GradeDTO(
-                grade.getId(),
                 grade.getValue(),
-                grade.getStudent() != null ? grade.getStudent().getId() : null,
-                grade.getExam() != null ? grade.getExam().getId() : null
+                studentName,
+                examDTO
         );
     }
 }

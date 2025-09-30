@@ -50,31 +50,8 @@ public class SubjectService {
     }
 
     private SubjectDTO toDTO(Subject subject) {
-        List<ExamDTO> examDTOs = subject.getExams() != null
-                ? subject.getExams().stream()
-                .map(e -> new ExamDTO(
-                        e.getId(),
-                        e.getTitle(),
-                        e.getSubject() != null ? e.getSubject().getId() : null,
-                        e.getGrades() != null
-                                ? e.getGrades().stream()
-                                .map(g -> new GradeDTO(
-                                        g.getId(),
-                                        g.getValue(),
-                                        g.getStudent() != null ? g.getStudent().getId() : null,
-                                        g.getExam() != null ? g.getExam().getId() : null
-                                ))
-                                .toList()
-                                : List.of()
-                ))
-                .toList()
-                : List.of();
-
         return new SubjectDTO(
-                subject.getId(),
-                subject.getName(),
-                examDTOs
+                subject.getName()
         );
     }
-
 }

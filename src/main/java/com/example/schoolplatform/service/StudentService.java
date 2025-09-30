@@ -1,5 +1,9 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.ExamDTO;
+import com.example.schoolplatform.dto.SubjectDTO;
+import com.example.schoolplatform.entity.Exam;
+import com.example.schoolplatform.entity.Grade;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.repository.StudentRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
@@ -50,12 +54,21 @@ public class StudentService {
     private StudentDTO toDTO(Student student) {
         List<GradeDTO> gradeDTOs = student.getGrades() != null
                 ? student.getGrades().stream()
-                .map(g -> new GradeDTO(
-                        g.getId(),
-                        g.getValue(),
-                        g.getStudent() != null ? g.getStudent().getId() : null,
-                        g.getExam() != null ? g.getExam().getId() : null
-                ))
+                .map(g -> {
+                    SubjectDTO subjectDTO = g.getExam() != null && g.getExam().getSubject() != null
+                            ? new SubjectDTO(g.getExam().getSubject().getName())
+                            : null;
+
+                    ExamDTO examDTO = g.getExam() != null
+                            ? new ExamDTO(g.getExam().getTitle(), subjectDTO)
+                            : null;
+
+                    return new GradeDTO(
+                            g.getValue(),
+                            student.getName(), // nome do estudante
+                            examDTO
+                    );
+                })
                 .toList()
                 : List.of();
 
@@ -66,5 +79,4 @@ public class StudentService {
                 gradeDTOs
         );
     }
-
 }
