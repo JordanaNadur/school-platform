@@ -64,7 +64,7 @@ public class StudentService {
 
                     return new GradeDTO(
                             g.getValue(),
-                            student.getName(), // nome do estudante
+                            student.getName(),
                             examDTO
                     );
                 })
