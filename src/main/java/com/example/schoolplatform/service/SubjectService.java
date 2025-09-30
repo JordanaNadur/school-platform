@@ -1,5 +1,8 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.ExamDTO;
+import com.example.schoolplatform.dto.GradeDTO;
+import com.example.schoolplatform.dto.SubjectDTO;
 import com.example.schoolplatform.entity.Subject;
 import com.example.schoolplatform.repository.SubjectRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
@@ -13,23 +16,30 @@ public class SubjectService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    public List<Subject> findAll() {
-        return subjectRepository.findAll();
+    public List<SubjectDTO> findAll() {
+        return subjectRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    public Subject findById(Long id) {
-        return subjectRepository.findById(id)
+    public SubjectDTO findById(Long id) {
+        Subject subject = subjectRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id " + id));
+        return toDTO(subject);
     }
 
-    public Subject save(Subject subject) {
-        return subjectRepository.save(subject);
+    public SubjectDTO save(Subject subject) {
+        return toDTO(subjectRepository.save(subject));
     }
 
-    public Subject update(Long id, Subject subjectDetails) {
-        Subject subject = findById(id);
+    public SubjectDTO update(Long id, Subject subjectDetails) {
+        Subject subject = subjectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Subject not found with id " + id));
+
         subject.setName(subjectDetails.getName());
-        return subjectRepository.save(subject);
+
+        return toDTO(subjectRepository.save(subject));
     }
 
     public void deleteById(Long id) {
@@ -38,4 +48,33 @@ public class SubjectService {
         }
         subjectRepository.deleteById(id);
     }
+
+    private SubjectDTO toDTO(Subject subject) {
+        List<ExamDTO> examDTOs = subject.getExams() != null
+                ? subject.getExams().stream()
+                .map(e -> new ExamDTO(
+                        e.getId(),
+                        e.getTitle(),
+                        e.getSubject() != null ? e.getSubject().getId() : null,
+                        e.getGrades() != null
+                                ? e.getGrades().stream()
+                                .map(g -> new GradeDTO(
+                                        g.getId(),
+                                        g.getValue(),
+                                        g.getStudent() != null ? g.getStudent().getId() : null,
+                                        g.getExam() != null ? g.getExam().getId() : null
+                                ))
+                                .toList()
+                                : List.of()
+                ))
+                .toList()
+                : List.of();
+
+        return new SubjectDTO(
+                subject.getId(),
+                subject.getName(),
+                examDTOs
+        );
+    }
+
 }

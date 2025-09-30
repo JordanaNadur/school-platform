@@ -6,6 +6,8 @@ import com.example.schoolplatform.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import com.example.schoolplatform.dto.StudentDTO;
+import com.example.schoolplatform.dto.GradeDTO;
 
 @Service
 public class StudentService {
@@ -13,24 +15,29 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public List<Student> findAll() {
-        return studentRepository.findAll();
+    public List<StudentDTO> findAll() {
+        return studentRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    public Student findById(Long id) {
-        return studentRepository.findById(id)
+    public StudentDTO findById(Long id) {
+        Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + id));
+        return toDTO(student);
     }
 
-    public Student save(Student student) {
-        return studentRepository.save(student);
+    public StudentDTO save(Student student) {
+        return toDTO(studentRepository.save(student));
     }
 
-    public Student update(Long id, Student studentDetails) {
-        Student student = findById(id);
+    public StudentDTO update(Long id, Student studentDetails) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + id));
         student.setName(studentDetails.getName());
         student.setEmail(studentDetails.getEmail());
-        return studentRepository.save(student);
+        return toDTO(studentRepository.save(student));
     }
 
     public void deleteById(Long id) {
@@ -39,4 +46,25 @@ public class StudentService {
         }
         studentRepository.deleteById(id);
     }
+
+    private StudentDTO toDTO(Student student) {
+        List<GradeDTO> gradeDTOs = student.getGrades() != null
+                ? student.getGrades().stream()
+                .map(g -> new GradeDTO(
+                        g.getId(),
+                        g.getValue(),
+                        g.getStudent() != null ? g.getStudent().getId() : null,
+                        g.getExam() != null ? g.getExam().getId() : null
+                ))
+                .toList()
+                : List.of();
+
+        return new StudentDTO(
+                student.getId(),
+                student.getName(),
+                student.getEmail(),
+                gradeDTOs
+        );
+    }
+
 }

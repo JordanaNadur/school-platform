@@ -1,7 +1,9 @@
 package com.example.schoolplatform.controller;
 
+import com.example.schoolplatform.dto.GradeDTO;
 import com.example.schoolplatform.entity.Grade;
 import com.example.schoolplatform.service.GradeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,25 +17,26 @@ public class GradeController {
     private GradeService gradeService;
 
     @GetMapping
-    public List<Grade> getAllGrades() {
+    public List<GradeDTO> getAllGrades() {
         return gradeService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Grade> getGradeById(@PathVariable Long id) {
-        Grade grade = gradeService.findById(id);
-        return ResponseEntity.ok(grade);
+    public ResponseEntity<GradeDTO> getGradeById(@PathVariable Long id) {
+        return ResponseEntity.ok(gradeService.findById(id));
     }
 
     @PostMapping
-    public Grade createGrade(@RequestBody Grade grade) {
+    public GradeDTO createGrade(@Valid @RequestBody Grade grade) {
         return gradeService.save(grade);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Grade> updateGrade(@PathVariable Long id, @RequestBody Grade gradeDetails) {
-        Grade updatedGrade = gradeService.update(id, gradeDetails);
-        return ResponseEntity.ok(updatedGrade);
+    public ResponseEntity<GradeDTO> updateGrade(
+            @PathVariable Long id,
+            @Valid @RequestBody Grade gradeDetails
+    ) {
+        return ResponseEntity.ok(gradeService.update(id, gradeDetails));
     }
 
     @DeleteMapping("/{id}")

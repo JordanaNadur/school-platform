@@ -6,6 +6,7 @@ import com.example.schoolplatform.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import com.example.schoolplatform.dto.GradeDTO;
 
 @Service
 public class GradeService {
@@ -13,25 +14,32 @@ public class GradeService {
     @Autowired
     private GradeRepository gradeRepository;
 
-    public List<Grade> findAll() {
-        return gradeRepository.findAll();
+    public List<GradeDTO> findAll() {
+        return gradeRepository.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
-    public Grade findById(Long id) {
-        return gradeRepository.findById(id)
+    public GradeDTO findById(Long id) {
+        Grade grade = gradeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Grade not found with id " + id));
+        return toDTO(grade);
     }
 
-    public Grade save(Grade grade) {
-        return gradeRepository.save(grade);
+    public GradeDTO save(Grade grade) {
+        return toDTO(gradeRepository.save(grade));
     }
 
-    public Grade update(Long id, Grade gradeDetails) {
-        Grade grade = findById(id);
+    public GradeDTO update(Long id, Grade gradeDetails) {
+        Grade grade = gradeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Grade not found with id " + id));
+
         grade.setValue(gradeDetails.getValue());
         grade.setStudent(gradeDetails.getStudent());
         grade.setExam(gradeDetails.getExam());
-        return gradeRepository.save(grade);
+
+        return toDTO(gradeRepository.save(grade));
     }
 
     public void deleteById(Long id) {
@@ -40,4 +48,14 @@ public class GradeService {
         }
         gradeRepository.deleteById(id);
     }
+
+    private GradeDTO toDTO(Grade grade) {
+        return new GradeDTO(
+                grade.getId(),
+                grade.getValue(),
+                grade.getStudent() != null ? grade.getStudent().getId() : null,
+                grade.getExam() != null ? grade.getExam().getId() : null
+        );
+    }
 }
+
