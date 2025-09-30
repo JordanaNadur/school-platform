@@ -1,7 +1,7 @@
 package com.example.schoolplatform.entity;
 
-import lombok.Data;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "grades")

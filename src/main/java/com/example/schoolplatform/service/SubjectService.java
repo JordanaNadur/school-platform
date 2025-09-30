@@ -1,13 +1,12 @@
 package com.example.schoolplatform.service;
 
-import com.example.schoolplatform.dto.ExamDTO;
-import com.example.schoolplatform.dto.GradeDTO;
 import com.example.schoolplatform.dto.SubjectDTO;
 import com.example.schoolplatform.entity.Subject;
-import com.example.schoolplatform.repository.SubjectRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
+import com.example.schoolplatform.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
