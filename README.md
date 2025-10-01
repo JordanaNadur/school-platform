@@ -60,6 +60,14 @@ This is a Spring Boot application for managing a school platform with students, 
 1. Build the project: `mvn clean install`
 2. Run the application: `mvn spring-boot:run`
 
+## Docker
+
+To dockerize the application:
+
+1. Build the jar: `mvn clean package`
+2. Build the image: `docker build -t school-platform .`
+3. Run the container: `docker run -p 8080:8080 school-platform`
+
 ## Access
 
 - Console H2: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
