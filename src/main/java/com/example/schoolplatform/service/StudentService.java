@@ -8,6 +8,10 @@ import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
 import com.example.schoolplatform.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +22,17 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public List<StudentDTO> findAll() {
-        return studentRepository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .toList();
+    public Page<StudentDTO> findAll(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return studentRepository.findAll(pageable).map(
+                this::toDTO
+        );
+
     }
 
     public StudentDTO findById(Long id) {

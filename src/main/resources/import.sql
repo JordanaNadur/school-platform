@@ -2,6 +2,9 @@
 INSERT INTO students (name, email) VALUES ('Gustavo Farias', 'gustavo@example.com');
 INSERT INTO students (name, email) VALUES ('Maria Silva', 'maria@example.com');
 INSERT INTO students (name, email) VALUES ('João Souza', 'joao@example.com');
+INSERT INTO students (name, email) VALUES ('Tomas Alves', 'tomas@example.com');
+INSERT INTO students (name, email) VALUES ('Felipe Eclipse', 'felipe@example.com');
+INSERT INTO students (name, email) VALUES ('Cecilia CeSharp', 'cecilia@example.com');
 
 INSERT INTO subjects (name) VALUES ('Mathematics');
 INSERT INTO subjects (name) VALUES ('History');
@@ -18,3 +21,9 @@ INSERT INTO grades (student_id, exam_id, grade_value) VALUES (3, 2, 7.5);
 INSERT INTO grades (student_id, exam_id, grade_value) VALUES (1, 4, 10.0);
 INSERT INTO grades (student_id, exam_id, grade_value) VALUES (2, 3, 9.0);
 INSERT INTO grades (student_id, exam_id, grade_value) VALUES (3, 3, 8.5);
+INSERT INTO grades (student_id, exam_id, grade_value) VALUES (4, 1, 6.0);
+INSERT INTO grades (student_id, exam_id, grade_value) VALUES (4, 2, 7.0);
+INSERT INTO grades (student_id, exam_id, grade_value) VALUES (5, 1, 8.0);
+INSERT INTO grades (student_id, exam_id, grade_value) VALUES (5, 2, 0.0);
+INSERT INTO grades (student_id, exam_id, grade_value) VALUES (6, 3, 5.5);
+INSERT INTO grades (student_id, exam_id, grade_value) VALUES (6, 4, 2.0);
