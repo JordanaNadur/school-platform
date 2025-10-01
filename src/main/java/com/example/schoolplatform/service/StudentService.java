@@ -1,7 +1,9 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.FinalGradeDTO;
 import com.example.schoolplatform.dto.GradeDTO;
 import com.example.schoolplatform.dto.StudentDTO;
+import com.example.schoolplatform.dto.SubjectDTO;
 import com.example.schoolplatform.entity.Grade;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,6 +27,9 @@ public class StudentService {
 
     @Autowired
     private GradeRepository gradeRepository;
+
+    @Autowired
+    private SubjectService subjectService;
 
     public Page<StudentDTO> findAll(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ?
@@ -92,4 +98,36 @@ public class StudentService {
 
         return new StudentDTO(student.getId(), student.getName(), student.getEmail(), gradeDTOs);
     }
+
+    public FinalGradeDTO getFinalGrade(Long idStudent, Long idSubject){
+        Student student = studentRepository.findById(idStudent)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + idStudent));
+        return toFinalGradeDTO(student, idSubject);
+
+    }
+
+    private FinalGradeDTO toFinalGradeDTO(Student student, Long idSubject) {
+        SubjectDTO subject = subjectService.findById(idSubject);
+        List<Grade> grades = student.getGrades();
+        List<Double> gradeValues = new ArrayList<>();
+
+        for(int i = 0; i<grades.size(); i++){
+            if(grades.get(i).getExam().getSubject().getId()==idSubject){
+                gradeValues.add(grades.get(i).getValue());
+            }
+        }
+
+        Double finalGrade = gradeValues.stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .orElse(0.0);
+
+        return new FinalGradeDTO(
+                finalGrade,
+                student.getName(),
+                subject,
+                gradeValues
+        );
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.schoolplatform.controller;
 
+import com.example.schoolplatform.dto.FinalGradeDTO;
 import com.example.schoolplatform.dto.StudentDTO;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.service.StudentService;
@@ -28,6 +29,11 @@ public class StudentController {
     @GetMapping("/{id}")
     public ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.findById(id));
+    }
+
+    @GetMapping("/{id}/subject/{idSubject}")
+    public ResponseEntity<FinalGradeDTO> getStudentFinalGrade(@PathVariable Long id, @PathVariable Long idSubject ) {
+        return ResponseEntity.ok(studentService.getFinalGrade(id,idSubject));
     }
 
     @PostMapping
