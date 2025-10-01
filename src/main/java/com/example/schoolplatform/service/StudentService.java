@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class StudentService {
@@ -111,9 +112,9 @@ public class StudentService {
         List<Grade> grades = student.getGrades();
         List<Double> gradeValues = new ArrayList<>();
 
-        for(int i = 0; i<grades.size(); i++){
-            if(grades.get(i).getExam().getSubject().getId()==idSubject){
-                gradeValues.add(grades.get(i).getValue());
+        for (Grade grade : grades) {
+            if (Objects.equals(grade.getExam().getSubject().getId(), idSubject)) {
+                gradeValues.add(grade.getValue());
             }
         }
 
@@ -123,10 +124,10 @@ public class StudentService {
                 .orElse(0.0);
 
         return new FinalGradeDTO(
-                finalGrade,
                 student.getName(),
                 subject,
-                gradeValues
+                gradeValues,
+                finalGrade
         );
     }
 
