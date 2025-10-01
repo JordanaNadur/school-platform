@@ -4,10 +4,11 @@ import com.example.schoolplatform.dto.StudentDTO;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/students")
@@ -17,8 +18,11 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping
-    public List<StudentDTO> getAllStudents() {
-        return studentService.findAll();
+    public ResponseEntity<Page<StudentDTO>> getAllStudents(@RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "3") int size,
+                                                           @RequestParam(defaultValue = "id") String sort,
+                                                           @RequestParam(defaultValue = "asc") String direction){
+        return ResponseEntity.ok(studentService.findAll(page, size, sort, direction));
     }
 
     @GetMapping("/{id}")

@@ -5,6 +5,7 @@ import com.example.schoolplatform.entity.Grade;
 import com.example.schoolplatform.service.GradeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -17,8 +18,11 @@ public class GradeController {
     private GradeService gradeService;
 
     @GetMapping
-    public List<GradeDTO> getAllGrades() {
-        return gradeService.findAll();
+    public  ResponseEntity<Page<GradeDTO>> getAllGrades(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "6") int size,
+                                                        @RequestParam(defaultValue = "id") String sort,
+                                                        @RequestParam(defaultValue = "asc") String direction) {
+        return ResponseEntity.ok(gradeService.findAll(page, size, sort, direction));
     }
 
     @GetMapping("/{id}")
