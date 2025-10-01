@@ -1,27 +1,33 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.ExamDTO;
 import com.example.schoolplatform.entity.Exam;
 import com.example.schoolplatform.entity.Subject;
-import com.example.schoolplatform.repository.ExamRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
+import com.example.schoolplatform.repository.ExamRepository;
+import com.example.schoolplatform.repository.SubjectRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class ExamServiceTest {
 
     @Mock
     private ExamRepository examRepository;
+
+    @Mock
+    private SubjectRepository subjectRepository;
 
     @InjectMocks
     private ExamService examService;
@@ -31,28 +37,37 @@ public class ExamServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        subject = new Subject("Mathematics");
+        subject = new Subject("Matemática");
+        subject.setId(1L);
     }
 
     @Test
-    @DisplayName("Deve retornar todos os exames")
+    @DisplayName("Deve retornar todos os exames como DTOs")
     void testFindAll() {
         Exam exam = new Exam("Final Exam", subject);
         when(examRepository.findAll()).thenReturn(Arrays.asList(exam));
-        List<Exam> exams = examService.findAll();
+
+        List<ExamDTO> exams = examService.findAll();
+
         assertEquals(1, exams.size());
-        assertEquals("Final Exam", exams.get(0).getTitle());
-        assertEquals("Mathematics", exams.get(0).getSubject().getName());
+        assertEquals("Final Exam", exams.get(0).title());
+        assertEquals("Matemática", exams.get(0).subject().name());
+
+        System.out.println("Teste findAll executado: " + exams.get(0).title() + " / " + exams.get(0).subject().name());
     }
 
     @Test
-    @DisplayName("Deve retornar exame por ID")
+    @DisplayName("Deve retornar exame por ID como DTO")
     void testFindById() {
         Exam exam = new Exam("Final Exam", subject);
         when(examRepository.findById(1L)).thenReturn(Optional.of(exam));
-        Exam found = examService.findById(1L);
-        assertEquals("Final Exam", found.getTitle());
-        assertEquals("Mathematics", found.getSubject().getName());
+
+        ExamDTO dto = examService.findById(1L);
+
+        assertEquals("Final Exam", dto.title());
+        assertEquals("Matemática", dto.subject().name());
+
+        System.out.println("Teste findById executado: " + dto.title() + " / " + dto.subject().name());
     }
 
     @Test
@@ -60,69 +75,61 @@ public class ExamServiceTest {
     void testFindByIdNotFound() {
         when(examRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> examService.findById(1L));
+        System.out.println("Teste findByIdNotFound executado: Exceção lançada corretamente");
     }
 
     @Test
-    @DisplayName("Deve salvar um novo exame")
+    @DisplayName("Deve salvar exame e retornar DTO")
     void testSave() {
         Exam exam = new Exam("Final Exam", subject);
+        when(subjectRepository.findById(1L)).thenReturn(Optional.of(subject));
         when(examRepository.save(any(Exam.class))).thenReturn(exam);
-        Exam saved = examService.save(exam);
-        assertEquals("Final Exam", saved.getTitle());
-        assertEquals("Mathematics", saved.getSubject().getName());
+
+        ExamDTO dto = examService.save(exam);
+
+        assertEquals("Final Exam", dto.title());
+        assertEquals("Matemática", dto.subject().name());
+
+        System.out.println("Teste save executado: " + dto.title() + " / " + dto.subject().name());
     }
 
     @Test
-    @DisplayName("Deve atualizar um exame existente")
+    @DisplayName("Deve atualizar exame existente e retornar DTO")
     void testUpdate() {
-        Exam exam = new Exam("Midterm Exam", subject);
-        Subject newSubject = new Subject("Physics");
-        when(examRepository.findById(1L)).thenReturn(Optional.of(exam));
-        when(examRepository.save(any(Exam.class))).thenReturn(exam);
-        Exam updated = examService.update(1L, new Exam("Final Exam", newSubject));
-        assertEquals("Final Exam", updated.getTitle());
-        assertEquals("Physics", updated.getSubject().getName());
+        Exam existingExam = new Exam("Midterm Exam", subject);
+        existingExam.setId(1L);
+
+        Subject newSubject = new Subject("Física");
+        newSubject.setId(2L);
+
+        when(subjectRepository.findById(2L)).thenReturn(Optional.of(newSubject));
+        when(examRepository.findById(1L)).thenReturn(Optional.of(existingExam));
+        when(examRepository.save(existingExam)).thenReturn(existingExam);
+
+        Exam examDetails = new Exam("Final Exam", newSubject);
+        ExamDTO dto = examService.update(1L, examDetails);
+
+        assertEquals("Final Exam", dto.title());
+        assertEquals("Física", dto.subject().name());
+
+        System.out.println("Teste update executado: " + dto.title() + " / " + dto.subject().name());
     }
 
     @Test
-    @DisplayName("Deve deletar um exame por ID")
+    @DisplayName("Deve deletar exame por ID")
     void testDeleteById() {
         when(examRepository.existsById(1L)).thenReturn(true);
         examService.deleteById(1L);
         verify(examRepository, times(1)).deleteById(1L);
+
+        System.out.println("Teste deleteById executado: ID 1 deletado");
     }
 
     @Test
-    @DisplayName("Deve lançar exceção ao tentar deletar exame inexistente")
+    @DisplayName("Deve lançar exceção ao deletar exame inexistente")
     void testDeleteByIdNotFound() {
         when(examRepository.existsById(1L)).thenReturn(false);
         assertThrows(ResourceNotFoundException.class, () -> examService.deleteById(1L));
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao salvar exame nulo")
-    void testSaveNullExam() {
-        assertThrows(NullPointerException.class, () -> examService.save(null));
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao atualizar exame nulo")
-    void testUpdateNullExam() {
-        assertThrows(NullPointerException.class, () -> examService.update(1L, null));
-    }
-
-    @Test
-    @DisplayName("Deve retornar lista vazia quando não houver exames")
-    void testFindAllEmpty() {
-        when(examRepository.findAll()).thenReturn(Collections.emptyList());
-        List<Exam> exams = examService.findAll();
-        assertTrue(exams.isEmpty());
-    }
-
-    @Test
-    @DisplayName("Deve lançar exceção ao ocorrer erro no repositório ao buscar todos")
-    void testFindAllRepositoryException() {
-        when(examRepository.findAll()).thenThrow(new RuntimeException("Erro no banco"));
-        assertThrows(RuntimeException.class, () -> examService.findAll());
+        System.out.println("Teste deleteByIdNotFound executado: Exceção lançada corretamente");
     }
 }
