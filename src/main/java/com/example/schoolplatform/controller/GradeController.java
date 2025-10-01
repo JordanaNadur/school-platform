@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/grades")
@@ -46,6 +45,6 @@ public class GradeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGrade(@PathVariable Long id) {
         gradeService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,11 +1,11 @@
 package com.example.schoolplatform.service;
 
-import com.example.schoolplatform.dto.ExamDTO;
 import com.example.schoolplatform.dto.GradeDTO;
 import com.example.schoolplatform.dto.StudentDTO;
-import com.example.schoolplatform.dto.SubjectDTO;
+import com.example.schoolplatform.entity.Grade;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
+import com.example.schoolplatform.repository.GradeRepository;
 import com.example.schoolplatform.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +22,9 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private GradeRepository gradeRepository;
+
     public Page<StudentDTO> findAll(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ?
                 Sort.by(sortBy).descending() :
@@ -29,10 +32,7 @@ public class StudentService {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        return studentRepository.findAll(pageable).map(
-                this::toDTO
-        );
-
+        return studentRepository.findAll(pageable).map(this::toDTO);
     }
 
     public StudentDTO findById(Long id) {
@@ -42,7 +42,18 @@ public class StudentService {
     }
 
     public StudentDTO save(Student student) {
-        return toDTO(studentRepository.save(student));
+        if (student.getGrades() != null && !student.getGrades().isEmpty()) {
+            List<Grade> persistedGrades = student.getGrades().stream()
+                    .map(g -> gradeRepository.findById(g.getId())
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "Grade not found with id " + g.getId()
+                            )))
+                    .toList();
+            student.setGrades(persistedGrades);
+        }
+
+        Student savedStudent = studentRepository.save(student);
+        return toDTO(savedStudent);
     }
 
     public StudentDTO update(Long id, Student studentDetails) {
@@ -62,29 +73,23 @@ public class StudentService {
 
     private StudentDTO toDTO(Student student) {
         List<GradeDTO> gradeDTOs = student.getGrades() != null
-                ? student.getGrades().stream()
-                .map(g -> {
-                    SubjectDTO subjectDTO = g.getExam() != null && g.getExam().getSubject() != null
-                            ? new SubjectDTO(g.getExam().getSubject().getName())
-                            : null;
-
-                    ExamDTO examDTO = g.getExam() != null
-                            ? new ExamDTO(g.getExam().getTitle(), subjectDTO)
-                            : null;
-
-                    return new GradeDTO(
-                            g.getValue(),
-                            student.getName(),
-                            examDTO
-                    );
-                })
-                .toList()
+                ? student.getGrades().stream().map(g -> new GradeDTO(
+                g.getId(),
+                g.getValue(),
+                student.getName(),
+                g.getExam() != null
+                        ? new com.example.schoolplatform.dto.ExamDTO(
+                        g.getExam().getId(),
+                        g.getExam().getTitle(),
+                        g.getExam().getSubject() != null
+                                ? new com.example.schoolplatform.dto.SubjectDTO(
+                                g.getExam().getSubject().getId(),
+                                g.getExam().getSubject().getName())
+                                : null)
+                        : null
+        )).toList()
                 : List.of();
 
-        return new StudentDTO(
-                student.getName(),
-                student.getEmail(),
-                gradeDTOs
-        );
+        return new StudentDTO(student.getId(), student.getName(), student.getEmail(), gradeDTOs);
     }
 }
