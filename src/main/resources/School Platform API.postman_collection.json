@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6df755c5-655b-4268-bfe5-169cf4a738f3",
+		"_postman_id": "97d5a0da-096a-44bb-98e1-1878b727a084",
 		"name": "School Platform API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "16189893"
@@ -68,6 +68,33 @@
 								"api",
 								"students",
 								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get student Final Grade",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/students/{{studentId}}/subject/{{subjectId}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"students",
+								"{{studentId}}",
+								"subject",
+								"{{subjectId}}"
 							]
 						}
 					},
