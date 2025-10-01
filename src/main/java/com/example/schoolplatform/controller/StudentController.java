@@ -37,13 +37,13 @@ public class StudentController {
     }
 
     @PostMapping
-    public StudentDTO createStudent(@Valid @RequestBody Student student) {
-        return studentService.save(student);
+    public StudentDTO createStudent(@Valid @RequestBody StudentDTO studentDTO) {
+        return studentService.save(studentDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<StudentDTO> updateStudent(@PathVariable Long id, @Valid @RequestBody Student studentDetails) {
-        return ResponseEntity.ok(studentService.update(id, studentDetails));
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable Long id, @Valid @RequestBody StudentDTO studentDTO) {
+        return ResponseEntity.ok(studentService.update(id, studentDTO));
     }
 
     @DeleteMapping("/{id}")

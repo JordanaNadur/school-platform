@@ -1,5 +1,6 @@
 package com.example.schoolplatform.service;
 
+import com.example.schoolplatform.dto.StudentDTO;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.repository.StudentRepository;
 import com.example.schoolplatform.exception.ResourceNotFoundException;
@@ -9,6 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -34,11 +39,12 @@ public class StudentServiceTest {
     @DisplayName("Deve retornar todos os estudantes")
     void testFindAll() {
         Student student = new Student("John Doe", "john@example.com");
-        when(studentRepository.findAll()).thenReturn(Arrays.asList(student));
-        List<Student> students = studentService.findAll();
-        assertEquals(1, students.size());
-        assertEquals("John Doe", students.get(0).getName());
-        assertEquals("john@example.com", students.get(0).getEmail());
+        Page<Student> studentPage = new PageImpl<>(Arrays.asList(student));
+        when(studentRepository.findAll(any(Pageable.class))).thenReturn(studentPage);
+        Page<StudentDTO> students = studentService.findAll(0, 10, "id", "asc");
+        assertEquals(1, students.getContent().size());
+        assertEquals("John Doe", students.getContent().get(0).name());
+        assertEquals("john@example.com", students.getContent().get(0).email());
     }
 
     @Test
@@ -46,9 +52,9 @@ public class StudentServiceTest {
     void testFindById() {
         Student student = new Student("John Doe", "john@example.com");
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
-        Student found = studentService.findById(1L);
-        assertEquals("John Doe", found.getName());
-        assertEquals("john@example.com", found.getEmail());
+        StudentDTO found = studentService.findById(1L);
+        assertEquals("John Doe", found.name());
+        assertEquals("john@example.com", found.email());
     }
 
     @Test
@@ -61,11 +67,12 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Deve salvar um novo estudante")
     void testSave() {
+        StudentDTO studentDTO = new StudentDTO(null, "John Doe", "john@example.com", List.of());
         Student student = new Student("John Doe", "john@example.com");
         when(studentRepository.save(any(Student.class))).thenReturn(student);
-        Student saved = studentService.save(student);
-        assertEquals("John Doe", saved.getName());
-        assertEquals("john@example.com", saved.getEmail());
+        StudentDTO saved = studentService.save(studentDTO);
+        assertEquals("John Doe", saved.name());
+        assertEquals("john@example.com", saved.email());
     }
 
     @Test
@@ -74,9 +81,9 @@ public class StudentServiceTest {
         Student student = new Student("John Doe", "john@example.com");
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
         when(studentRepository.save(any(Student.class))).thenReturn(student);
-        Student updated = studentService.update(1L, new Student("Jane Doe", "jane@example.com"));
-        assertEquals("Jane Doe", updated.getName());
-        assertEquals("jane@example.com", updated.getEmail());
+        StudentDTO updated = studentService.update(1L, new StudentDTO(null, "Jane Doe", "jane@example.com", List.of()));
+        assertEquals("Jane Doe", updated.name());
+        assertEquals("jane@example.com", updated.email());
     }
 
     @Test
@@ -109,15 +116,16 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Deve retornar lista vazia quando não houver estudantes")
     void testFindAllEmpty() {
-        when(studentRepository.findAll()).thenReturn(Collections.emptyList());
-        List<Student> students = studentService.findAll();
-        assertTrue(students.isEmpty());
+        Page<Student> emptyPage = new PageImpl<>(Collections.emptyList());
+        when(studentRepository.findAll(any(Pageable.class))).thenReturn(emptyPage);
+        Page<StudentDTO> students = studentService.findAll(0, 10, "id", "asc");
+        assertTrue(students.getContent().isEmpty());
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao ocorrer erro no repositório ao buscar todos")
     void testFindAllRepositoryException() {
-        when(studentRepository.findAll()).thenThrow(new RuntimeException("Erro no banco"));
-        assertThrows(RuntimeException.class, () -> studentService.findAll());
+        when(studentRepository.findAll(any(Pageable.class))).thenThrow(new RuntimeException("Erro no banco"));
+        assertThrows(RuntimeException.class, () -> studentService.findAll(0, 10, "id", "asc"));
     }
 }

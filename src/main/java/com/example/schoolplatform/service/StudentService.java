@@ -48,9 +48,10 @@ public class StudentService {
         return toDTO(student);
     }
 
-    public StudentDTO save(Student student) {
-        if (student.getGrades() != null && !student.getGrades().isEmpty()) {
-            List<Grade> persistedGrades = student.getGrades().stream()
+    public StudentDTO save(StudentDTO studentDTO) {
+        Student student = new Student(studentDTO.name(), studentDTO.email());
+        if (studentDTO.grades() != null && !studentDTO.grades().isEmpty()) {
+            List<Grade> persistedGrades = studentDTO.grades().stream()
                     .map(g -> gradeRepository.findById(g.getId())
                             .orElseThrow(() -> new ResourceNotFoundException(
                                     "Grade not found with id " + g.getId()
@@ -63,11 +64,11 @@ public class StudentService {
         return toDTO(savedStudent);
     }
 
-    public StudentDTO update(Long id, Student studentDetails) {
+    public StudentDTO update(Long id, StudentDTO studentDetails) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + id));
-        student.setName(studentDetails.getName());
-        student.setEmail(studentDetails.getEmail());
+        student.setName(studentDetails.name());
+        student.setEmail(studentDetails.email());
         return toDTO(studentRepository.save(student));
     }
 
