@@ -3,11 +3,11 @@ package com.example.schoolplatform.controller;
 import com.example.schoolplatform.dto.StudentDTO;
 import com.example.schoolplatform.entity.Student;
 import com.example.schoolplatform.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 
 
 @RestController
@@ -43,6 +43,6 @@ public class StudentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
