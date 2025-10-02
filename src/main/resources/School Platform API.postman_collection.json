@@ -112,7 +112,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Gustavo Farias\",\n  \"email\": \"gustavo@example.com\"\n}"
+							"raw": "{\n  \"name\": \"Lucas Pereira\",\n  \"email\": \"gustavo@example.com\",\n  \"grades\": [\n    {\n        \"id\": 9\n    }\n  ]\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/api/students",
@@ -513,7 +513,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"value\": 9.5,\n  \"student\": {\n    \"name\": \"Gustavo Farias\",\n    \"email\": \"gustavo@example.com\"\n  },\n  \"exam\": {\n    \"title\": \"Exam 1\",\n    \"subject\": { \"name\": \"Mathematics\" }\n  }\n}"
+							"raw": "{\n  \"value\": 9.5,\n  \"student\": {\n    \"id\": 1\n  },\n  \"exam\": {\n    \"id\": 1,\n    \"subject\": { \n        \"id\": 1\n    }\n  }\n}"
 						},
 						"url": {
 							"raw": "http://localhost:8080/api/grades",
