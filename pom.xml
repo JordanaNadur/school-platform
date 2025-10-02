@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>school-platform</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <name>school-platform</name>
     <description>School Platform API</description>
     <properties>
