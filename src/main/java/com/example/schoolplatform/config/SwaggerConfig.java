@@ -13,7 +13,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("School Platform API")
-                        .version("1.0")
+                        .version("1.0.1-SNAPSHOT")
                         .description("Documentação da API da plataforma escolar"));
     }
 }
