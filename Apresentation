@@ -1,0 +1,125 @@
+# Plataforma Escolar - Apresentação
+
+Este repositório contém uma API RESTful para uma plataforma escolar desenvolvida com Spring Boot. A apresentação está dividida em 4 partes principais, incluindo um diagrama de arquitetura aprimorado.
+
+## Parte 1: Visão Geral do Projeto e Configuração
+
+### Descrição
+A Plataforma Escolar é uma aplicação Spring Boot que fornece uma API para gerenciar estudantes, exames, notas e disciplinas. Utiliza JPA para persistência de dados com H2 database em memória para desenvolvimento.
+
+### Estrutura do Projeto
+- `src/main/java/com/example/schoolplatform/`: Código fonte principal
+- `src/main/resources/`: Configurações (application.properties)
+- `src/test/`: Testes unitários
+- `pom.xml`: Configuração Maven
+
+### Dependências Principais
+- Spring Boot Starter Web
+- Spring Boot Starter Data JPA
+- H2 Database
+- Lombok
+- Spring Boot Starter Test
+
+### Como Executar
+```bash
+mvn spring-boot:run
+```
+
+## Parte 2: Modelo de Dados (Entidades e DTOs)
+
+### Entidades
+- **Student**: Representa um estudante com id, nome, email e lista de notas.
+- **Exam**: Representa um exame com id, nome, data e disciplina associada.
+- **Grade**: Representa uma nota com id, valor, estudante e exame associados.
+- **Subject**: Representa uma disciplina com id, nome e lista de exames.
+
+### DTOs
+- **StudentDTO**: Usado para transferir dados de estudante na API, incluindo id, nome, email e notas.
+
+### Relacionamentos
+- Student 1:N Grade
+- Subject 1:N Exam
+- Exam 1:N Grade
+
+## Parte 3: Lógica de Negócios (Serviços)
+
+### Serviços Implementados
+- **StudentService**: CRUD para estudantes, com paginação e validação.
+- **ExamService**: CRUD para exames.
+- **GradeService**: CRUD para notas.
+- **SubjectService**: CRUD para disciplinas.
+
+### Funcionalidades
+- Busca paginada de estudantes
+- Validação de existência de recursos
+- Tratamento de exceções personalizadas (ResourceNotFoundException)
+
+## Parte 4: Camada de API e Testes
+
+### Controladores
+- **StudentController**: Endpoints REST para /api/students
+  - GET /api/students: Lista estudantes com paginação
+  - GET /api/students/{id}: Busca estudante por ID
+  - POST /api/students: Cria novo estudante
+  - PUT /api/students/{id}: Atualiza estudante
+  - DELETE /api/students/{id}: Remove estudante
+
+- **ExamController**, **GradeController**, **SubjectController**: Endpoints similares para exames, notas e disciplinas.
+
+### Testes
+- Testes unitários para serviços usando Mockito
+- Testes de integração para controladores usando MockMvc
+- Cobertura de cenários positivos e negativos
+
+## Diagrama de Arquitetura
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Cliente (Frontend/Browser)                    │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Controller Layer (REST API)                  │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐    │
+│  │ StudentController│ │ ExamController │ │ GradeController │    │
+│  └─────────────────┘ └─────────────────┘ └─────────────────┘    │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Service Layer (Business Logic)               │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐    │
+│  │ StudentService  │ │ ExamService    │ │ GradeService    │    │
+│  └─────────────────┘ └─────────────────┘ └─────────────────┘    │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Repository Layer (Data Access)               │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐    │
+│  │ StudentRepository│ │ ExamRepository │ │ GradeRepository │    │
+│  └─────────────────┘ └─────────────────┘ └─────────────────┘    │
+└─────────────────────────────┬───────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Database Layer (Persistence)                 │
+│  ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐    │
+│  │   Student       │ │   Exam         │ │   Grade         │    │
+│  │   Entity        │ │   Entity       │ │   Entity        │    │
+│  └─────────────────┘ └─────────────────┘ └─────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+
+Fluxo de Dados:
+1. Cliente → Controller (recebe requisição HTTP)
+2. Controller → Service (processa lógica, usa DTOs)
+3. Service → Repository (acessa dados)
+4. Repository → Database (persiste/recupera)
+5. Resposta volta: Database → Repository → Service → Controller → Cliente
+
+DTOs são usados entre Controller e Service para desacoplar a API das entidades.
+```
+
+## Conclusão
+Esta plataforma escolar demonstra boas práticas de desenvolvimento com Spring Boot, incluindo separação de responsabilidades, uso de DTOs para APIs, testes abrangentes e documentação clara.
